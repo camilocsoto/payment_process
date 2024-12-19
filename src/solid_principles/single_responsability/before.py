@@ -9,8 +9,9 @@ from stripe.error import StripeError
 _ = load_dotenv()
 
 
-@dataclass
+@dataclass # permite crear la clase sin el __init__ del objeto para instanciar la clase
 class PaymentProcessor:
+    #proceso de validación de información
     def process_transaction(self, customer_data, payment_data) -> Charge:
         if not customer_data.get("name"):
             print("Invalid customer data: missing name")
@@ -19,11 +20,11 @@ class PaymentProcessor:
         if not customer_data.get("contact_info"):
             print("Invalid customer data: missing contact info")
             raise ValueError("Invalid customer data: missing contact info")
-
+    # responsability: proceso de validación de info bancaria
         if not payment_data.get("source"):
             print("Invalid payment data")
-            raise ValueError("Invalid payment data")
-
+            raise ValueError("Invalid payment data") # 🟦 rais is better than return an error
+    # responsability: creación de transacción
         stripe.api_key = os.getenv("STRIPE_API_KEY")
 
         try:
@@ -37,7 +38,7 @@ class PaymentProcessor:
         except StripeError as e:
             print("Payment failed:", e)
             raise e
-
+    # responsability: creación de notificación
         if "email" in customer_data["contact_info"]:
             # import smtplib
             from email.mime.text import MIMEText
@@ -62,6 +63,7 @@ class PaymentProcessor:
         else:
             print("No valid contact information for notification")
             return charge
+    # responsability: registro en los logger file
 
         with open("transactions.log", "a") as log_file:
             log_file.write(
