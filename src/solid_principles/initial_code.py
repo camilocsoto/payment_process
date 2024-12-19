@@ -79,7 +79,7 @@ if __name__ == "__main__":
         "contact_info": {"phone": "1234567890"},
     }
 
-    payment_data = {"amount": 500, "source": "tok_mastercard", "cvv": 123}
+    payment_data = {"amount": 1000, "source": "tok_visa", "cvv": 123}
 
     payment_processor.process_transaction(
         customer_data_with_email, payment_data
