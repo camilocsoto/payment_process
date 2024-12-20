@@ -3,6 +3,7 @@
 - Permite agregar más notificadores a parte de mail y sms pero no modificar 
 los existentes
 usa el principio de abstracción y herencia
+Busca el emoji 🆗 y te darás cuenta dónde se vé implementado el principio O
 """
 
 import os
@@ -148,7 +149,7 @@ class PaymentService: # orquesta todas las clases
     payment_processor: PaymentProcessor = field( 
         default_factory=StripePaymentProcessor
     )
-    notifier: Notifier = field(default_factory=EmailNotifier)
+    notifier: Notifier = field(default_factory=EmailNotifier) # 🆗
     logger = TransactionLogger()
 
     def process_transaction(self, customer_data, payment_data) -> Charge:
@@ -175,7 +176,7 @@ class PaymentService: # orquesta todas las clases
 if __name__ == "__main__":
     #evita que por defecto se envíe al mail y se envía al sms
     sms_notifier = SMSNotifier()
-    payment_processor = PaymentService(notifier=SMSNotifier)
+    payment_processor = PaymentService(notifier=SMSNotifier) #🆗
 
     customer_data_with_email = CustomerData(
         name="John Doe", contact_info=ContactInfo(email="john@example.com")

@@ -1,5 +1,6 @@
 """ Principio solid S
 Cada clase tiene solo su responsabilidad
+# Buca el emoji 🆗 para ver la linea más importante que unifica todo.
 """
 import os
 from dataclasses import dataclass
@@ -128,7 +129,7 @@ if __name__ == "__main__":
     payment_data = {"amount": 500, "source": "tok_mastercard", "cvv": 123}
 
     payment_processor.process_transaction(
-        customer_data_with_email, payment_data
+        customer_data_with_email, payment_data # 🆗
     )
     payment_processor.process_transaction(
         customer_data_with_phone, payment_data

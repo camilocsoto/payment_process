@@ -1,3 +1,7 @@
+"""
+este código tiene un bug a proposito ya que no cumple con el principio L
+busca los emojis 🆗 y verás donde está el bug
+"""
 import os
 from dataclasses import dataclass, field
 from typing import Optional, Protocol
@@ -35,10 +39,7 @@ class CustomerValidator:
         if not customer_data.contact_info:
             print("Invalid customer data: missing contact info")
             raise ValueError("Invalid customer data: missing contact info")
-        if not (
-            customer_data.contact_info.email
-            or customer_data.contact_info.phone
-        ):
+        if not (customer_data.contact_info.email or customer_data.contact_info.phone):
             print("Invalid customer data: missing email and phone")
             raise ValueError("Invalid customer data: missing email and phone")
 
@@ -52,7 +53,6 @@ class PaymentDataValidator:
         if payment_data.amount <= 0:
             print("Invalid payment data: amount must be positive")
             raise ValueError("Invalid payment data: amount must be positive")
-
 
 class Notifier(Protocol):
     """
@@ -82,13 +82,16 @@ class EmailNotifier(Notifier):
         msg["To"] = customer_data.contact_info.email or ""
 
         print("Email sent to", customer_data.contact_info.email)
-
-
-@dataclass
+"""
+Las subclases EmailNotifier y SMSNotifier no son sustituibles
+"""
 class SMSNotifier(Notifier):
-    sms_gateway: str
-
-    def send_confirmation(self, customer_data: CustomerData):
+    """
+    Esta sección va a generar un error 🟥
+    Ya que hereda de la interfaz/protocolo Notifier y tiene un parámetro demás
+    Esto no se puede hacer
+    """
+    def send_confirmation(self, customer_data: CustomerData, sms_gateway: str):
         phone_number = customer_data.contact_info.phone
         print(
             f"send the sms using {self.sms_gateway}: SMS sent to {phone_number}: Thank you for your payment."
@@ -98,15 +101,10 @@ class SMSNotifier(Notifier):
 @dataclass
 class TransactionLogger:
     def log(
-        self,
-        customer_data: CustomerData,
-        payment_data: PaymentData,
-        charge: Charge,
+        self, customer_data: CustomerData, payment_data: PaymentData, charge: Charge
     ):
         with open("transactions.log", "a") as log_file:
-            log_file.write(
-                f"{customer_data.name} paid {payment_data.amount}\n"
-            )
+            log_file.write(f"{customer_data.name} paid {payment_data.amount}\n")
             log_file.write(f"Payment status: {charge['status']}\n")
 
 
@@ -158,9 +156,7 @@ class StripePaymentProcessor(PaymentProcessor):
 class PaymentService:
     customer_validator = CustomerValidator()
     payment_validator = PaymentDataValidator()
-    payment_processor: PaymentProcessor = field(
-        default_factory=StripePaymentProcessor
-    )
+    payment_processor: PaymentProcessor = field(default_factory=StripePaymentProcessor)
     notifier: Notifier = field(default_factory=EmailNotifier)
     logger = TransactionLogger()
 
@@ -181,9 +177,11 @@ class PaymentService:
 
 
 if __name__ == "__main__":
+    # 🆗Ey, si no le pasas el parametro a la clase para que cree el objeto, no te va a dejar!
     sms_notifier = SMSNotifier(sms_gateway="This is a sms mock gateway")
     payment_service = PaymentService()
-    payment_service_sms_notifier = PaymentService(notifier=sms_notifier)
+    # 🆗 cambias el funcionamiento de la interfaz para que notifique por sms y no mail
+    payment_service_sms_notifier = PaymentService(notifier=sms_notifier) 
 
     customer_data_with_email = CustomerData(
         name="John Doe", contact_info=ContactInfo(email="john@example.com")

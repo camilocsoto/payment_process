@@ -1,3 +1,10 @@
+"""
+este código ya cumple con el principio L
+busca los emojis 🆗 y verás donde está aplicado.
+Las clases que no eran sustituibes ahora lo son facilmente, pasando el argumento como un atributo
+de la clase, es decir un objeto que debe definirse al momento de crear la clase.
+"""
+
 import os
 from dataclasses import dataclass, field
 from typing import Optional, Protocol
@@ -53,11 +60,15 @@ class PaymentDataValidator:
             print("Invalid payment data: amount must be positive")
             raise ValueError("Invalid payment data: amount must be positive")
 
-
+# protocol es otra forma de indicar interfaces en python: de hecho en python no se llaman
+# interfaces, se llaman protocolos 🤯
+# los protocolos funcionan muy parecido a las clases abstractas
 class Notifier(Protocol):
-    """
+    """ 
+    este docstring documenta qué recibe como parámetro y qué hace la clase 
+    siguiendo la estructura de Numpy
+    
     Protocol for sending notifications.
-
     This protocol defines the interface for notifiers. Implementations
     should provide a method `send_confirmation` that sends a confirmation
     to the customer.
@@ -83,16 +94,27 @@ class EmailNotifier(Notifier):
 
         print("Email sent to", customer_data.contact_info.email)
 
-
+"""
+Las subclases EmailNotifier y SMSNotifier no eran sustituibles
+"""
 @dataclass
 class SMSNotifier(Notifier):
-    sms_gateway: str
+    # ASÍ SE CAMBIA EL COMPORTAMIENTO DE UNA SUBCLASE QUE HEREDA DE UNA INTERFAZ:
+    sms_gateway: str # 🆗 si defines este atributo de objeto en la clase y no en el argumento 
+                    # de la función, ya no se va a generar el error.
 
     def send_confirmation(self, customer_data: CustomerData):
+        phone_number = customer_data.contact_info.phone
+        print(                            #👇 así accedes al atributo de la clase!
+            f"send the sms using {self.sms_gateway}: SMS sent to {phone_number}: Thank you for your payment."
+        )
+""" así estaba antes el código y generaba error 
+def send_confirmation(self, customer_data: CustomerData, sms_gateway: str): ❌ recibe más parametros.
         phone_number = customer_data.contact_info.phone
         print(
             f"send the sms using {self.sms_gateway}: SMS sent to {phone_number}: Thank you for your payment."
         )
+"""
 
 
 @dataclass
@@ -181,8 +203,10 @@ class PaymentService:
 
 
 if __name__ == "__main__":
+    # 🆗Ey, si no le pasas el parametro a la clase para que cree el objeto, no te va a dejar!
     sms_notifier = SMSNotifier(sms_gateway="This is a sms mock gateway")
     payment_service = PaymentService()
+    # 🆗 cambias el funcionamiento de la interfaz para que notifique por sms y no mail
     payment_service_sms_notifier = PaymentService(notifier=sms_notifier)
 
     customer_data_with_email = CustomerData(
