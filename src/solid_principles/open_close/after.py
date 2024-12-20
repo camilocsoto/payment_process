@@ -1,25 +1,31 @@
+""" Principio solid O
+- Permite agregar más procesadores de pago pero no modificar los existentes
+- Permite agregar más notificadores a parte de mail y sms pero no modificar 
+los existentes
+usa el principio de abstracción y herencia
+"""
+
 import os
 from dataclasses import dataclass, field
 from typing import Optional
 from abc import ABC, abstractmethod
 import stripe
-from dotenv import load_dotenv
+from dotenv import load_dotenv 
 from pydantic import BaseModel
 from stripe import Charge
 from stripe.error import StripeError
 
 _ = load_dotenv()
 
-
 class ContactInfo(BaseModel):
+    # Optional is an object from typing library and its type is str,
+    # but for default it's null.
     email: Optional[str] = None
     phone: Optional[str] = None
-
 
 class CustomerData(BaseModel):
     name: str
     contact_info: ContactInfo
-
 
 class PaymentData(BaseModel):
     amount: int
@@ -53,8 +59,7 @@ class PaymentDataValidator:
             print("Invalid payment data: amount must be positive")
             raise ValueError("Invalid payment data: amount must be positive")
 
-
-class Notifier(ABC):
+class Notifier(ABC): # interface
     @abstractmethod
     def send_confirmation(self, customer_data: CustomerData): ...
 
@@ -99,8 +104,12 @@ class PaymentProcessor(ABC):
     @abstractmethod
     def process_transaction(
         self, customer_data: CustomerData, payment_data: PaymentData
-    ) -> Charge: ...
+    ) -> Charge: ... # la lógica la implementan los procesadores (subclases)
 
+"""
+# Al compilar, no se debe ejecutar a StripePaymentProcessor (subclase), sino que debe 
+# ejecutarse a PaymentProcessor (la interface o clase abstracta) en el __name__
+"""
 
 @dataclass
 class StripePaymentProcessor(PaymentProcessor):
@@ -123,10 +132,20 @@ class StripePaymentProcessor(PaymentProcessor):
 
 
 @dataclass
-class PaymentService:
+class PaymentService: # orquesta todas las clases
     customer_validator = CustomerValidator()
     payment_validator = PaymentDataValidator()
-    payment_processor: PaymentProcessor = field(
+    """
+    # no uses StripePaymentProcessor, usa la clase abstracta o intermedia,
+    # asi no dependes de los métodos de stripe, sino de una clase abstracta.
+    ----------------------------------------------------------------------
+    si dejáses: payment_processor: PaymentProcessor, funcionaría. Pero la clase abs. no tiene
+    ninguna lógica, por lo que solo recibiría la info el objeto de tipo PaymentProcessor
+    # la lógica la tiene el procesador de pagos de stripe.
+    # field() es un atributo del dataclass.
+    # default_factory crea por defecto a StripePaymentProcessor como instancia de la clase.
+    """
+    payment_processor: PaymentProcessor = field( 
         default_factory=StripePaymentProcessor
     )
     notifier: Notifier = field(default_factory=EmailNotifier)
@@ -147,16 +166,16 @@ class PaymentService:
             charge = self.payment_processor.process_transaction(
                 customer_data, payment_data
             )
-            self.notifier.send_confirmation(customer_data)
+            self.notifier.send_confirmation(customer_data, payment_data)
             self.logger.log(customer_data, payment_data, charge)
             return charge
         except StripeError as e:
             raise e
 
-
 if __name__ == "__main__":
+    #evita que por defecto se envíe al mail y se envía al sms
     sms_notifier = SMSNotifier()
-    payment_processor = PaymentService()
+    payment_processor = PaymentService(notifier=SMSNotifier)
 
     customer_data_with_email = CustomerData(
         name="John Doe", contact_info=ContactInfo(email="john@example.com")
@@ -167,7 +186,7 @@ if __name__ == "__main__":
 
     payment_data = PaymentData(amount=100, source="tok_visa")
 
-    payment_processor.process_transaction(
+    payment_processor.process_transaction( 
         customer_data_with_email, payment_data
     )
     payment_processor.process_transaction(

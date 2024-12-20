@@ -1,3 +1,6 @@
+""" Principio solid S
+Cada clase tiene solo su responsabilidad
+"""
 import os
 from dataclasses import dataclass
 import stripe
