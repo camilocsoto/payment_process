@@ -75,7 +75,7 @@ class Notifier(Protocol):
 class EmailNotifier(Notifier):
     def send_confirmation(self, customer_data: CustomerData):
         from email.mime.text import MIMEText
-
+ 
         msg = MIMEText("Thank you for your payment.")
         msg["Subject"] = "Payment Confirmation"
         msg["From"] = "no-reply@example.com"
