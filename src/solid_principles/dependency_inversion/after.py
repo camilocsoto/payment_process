@@ -1,3 +1,27 @@
+"""
+clases de bajo nivel o detalles especificos:
+StripePaymentProcessor() 
+OfflinePaymentProcessor()
+EmailNotifier()
+SMSNotifier(gateway="CustomGateway")
+CustomerValidator()
+TransactionLogger()
+
+Interfaces:
+PaymentProcessorProtocol
+Notifier
+CustomerValidator
+PaymentDataValidator
+TransactionLogger
+RecurringPaymentProtocol
+RefundPaymentProtocol
+
+clase de alto nivel: 
+paymentService(...)
+
+
+"""
+
 import os
 from dataclasses import dataclass, field
 from typing import Optional, Protocol
@@ -43,25 +67,8 @@ class PaymentProcessorProtocol(Protocol):
 
     def process_transaction(
         self, customer_data: CustomerData, payment_data: PaymentData
-    ) -> PaymentResponse: ...
-
-
-class RefundPaymentProtocol(Protocol):
-    def refund_payment(self, transaction_id: str) -> PaymentResponse: ...
-
-
-class RecurringPaymentProtocol(Protocol):
-    def setup_recurring_payment(
-        self, customer_data: CustomerData, payment_data: PaymentData
-    ) -> PaymentResponse: ...
-
-
-class StripePaymentProcessor(
-    PaymentProcessorProtocol, RefundPaymentProtocol, RecurringPaymentProtocol
-):
-    def process_transaction(
-        self, customer_data: CustomerData, payment_data: PaymentData
     ) -> PaymentResponse:
+        """Define cómo se realiza el cobro"""
         stripe.api_key = os.getenv("STRIPE_API_KEY")
         try:
             charge = stripe.Charge.create(
@@ -86,7 +93,10 @@ class StripePaymentProcessor(
                 message=str(e),
             )
 
+
+class RefundPaymentProtocol(Protocol):
     def refund_payment(self, transaction_id: str) -> PaymentResponse:
+        """Define cómo se realiza el reembolso"""
         stripe.api_key = os.getenv("STRIPE_API_KEY")
         try:
             refund = stripe.Refund.create(charge=transaction_id)
@@ -105,10 +115,14 @@ class StripePaymentProcessor(
                 transaction_id=None,
                 message=str(e),
             )
+    
 
+
+class RecurringPaymentProtocol(Protocol):
     def setup_recurring_payment(
         self, customer_data: CustomerData, payment_data: PaymentData
     ) -> PaymentResponse:
+        """Define cómo se realiza la recurrencia"""
         stripe.api_key = os.getenv("STRIPE_API_KEY")
         price_id = os.getenv("STRIPE_PRICE_ID", "")
         try:
@@ -144,6 +158,13 @@ class StripePaymentProcessor(
                 transaction_id=None,
                 message=str(e),
             )
+
+
+class StripePaymentProcessor():
+    process_transaction: PaymentProcessorProtocol
+    refund_payment: RefundPaymentProtocol
+    setup_recurring_payment: RecurringPaymentProtocol #antes estaban heredando y no se cumplía el principio solid SO
+    
 
     def _get_or_create_customer(
         self, customer_data: CustomerData
@@ -306,7 +327,7 @@ class PaymentDataValidator:
 @dataclass
 class PaymentService:
     payment_processor: PaymentProcessorProtocol
-    notifier: Notifier
+    notifier: Notifier # Instania las clases pero no debe saber cómo ni cual, eso se hace en la lógica de negocio
     customer_validator: CustomerValidator
     payment_validator: PaymentDataValidator
     logger: TransactionLogger
@@ -349,15 +370,23 @@ class PaymentService:
 
 
 if __name__ == "__main__":
-    stripe_processor = StripePaymentProcessor()
-    offline_processor = OfflinePaymentProcessor()
+    """
+    🆗 StripePaymentProcessor Ya tiene las interfaces de reembolso y recurrencias, no es necesario volverlas a instanciar.
+    payment_service es una clase de alto nivel, que dirije la lógica del negocio
+    """
+    stripe_processor = StripePaymentProcessor() 
+    offline_processor = OfflinePaymentProcessor() # usa el de stripe o el offline, no ambos en un unico payment processor
     email_notifier = EmailNotifier()
-    sms_notifier = SMSNotifier(gateway="CustomGateway")
-    customer_validator = CustomerValidator()
+    sms_notifier = SMSNotifier(gateway="CustomGateway") # usa el sms o el mail, no ambos en un unico payment processor
+    # CustomerValidator es una clase abstracta o interfaz, si dejas = field(default_factory=CustomerValidator), haces que 
+    # dependa de una subclase y dejaría de cumplirse el principio D 🆗
+    customer_validator = CustomerValidator() 
     payment_validator = PaymentDataValidator()
     logger = TransactionLogger()
-
+    
+    # ¡Inyección de dependencias! 🆗 sabemos como se instancian y a su vez cómo inyectarlas a la clase superior 
     payment_service = PaymentService(
+        #stripe payment
         payment_processor=stripe_processor,
         notifier=email_notifier,
         customer_validator=customer_validator,
@@ -368,6 +397,7 @@ if __name__ == "__main__":
     )
 
     second_service = PaymentService(
+        # offline payment
         payment_processor=offline_processor,
         notifier=sms_notifier,
         customer_validator=customer_validator,

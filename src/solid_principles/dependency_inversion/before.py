@@ -1,3 +1,10 @@
+"""
+Principio solid D, es el más importante.
+sin hacerle modificaciones al código: este ya está desacoplado:
+la clase PaymentProcessorProtocol maneja la lógica de negocio, esto alimenta 
+a offlinePaymentProcesor y stripeProcess: finalmente, los módulos de bajo nivel 
+Busca los emojos 🆗 para ver donde 
+"""
 import os
 from dataclasses import dataclass, field
 from typing import Optional, Protocol
@@ -56,7 +63,7 @@ class RecurringPaymentProtocol(Protocol):
     ) -> PaymentResponse: ...
 
 
-class StripePaymentProcessor(
+class StripePaymentProcessor( #🟢
     PaymentProcessorProtocol, RefundPaymentProtocol, RecurringPaymentProtocol
 ):
     def process_transaction(
@@ -304,16 +311,15 @@ class PaymentDataValidator:
 
 
 @dataclass
-class PaymentService:
-    payment_processor: PaymentProcessorProtocol
+class PaymentService: #business logic class
+    payment_processor: PaymentProcessorProtocol #así se implementan las interfaces.
     notifier: Notifier
-    customer_validator: CustomerValidator = field(
-        default_factory=CustomerValidator
-    )
+    #LAS CLASES DE ALTO NIVEL NO NECESITAN SABER CÓMO INSTANCIAR LAS CLASES DE BAJO NIVEL 🆗
+    customer_validator: CustomerValidator # = field(default_factory=CustomerValidator)
     payment_validator: PaymentDataValidator = field(
         default_factory=PaymentDataValidator
     )
-    logger: TransactionLogger = field(default_factory=TransactionLogger)
+    logger: TransactionLogger # = field(default_factory=TransactionLogger)
     recurring_processor: Optional[RecurringPaymentProtocol] = None
     refund_processor: Optional[RefundPaymentProtocol] = None
 
