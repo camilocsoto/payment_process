@@ -8,7 +8,7 @@ from processors import (
     PaymentProcessorProtocol,
     RecurringPaymentProcessorProtocol,
     RefundProcessorProtocol,
-)
+em) # trae los 3 protocolos sin una implementación especifica
 from validators import CustomerValidator, PaymentDataValidator
 from factory import PaymentProcessorFactory
 

@@ -4,7 +4,7 @@ from .payment import PaymentProcessorProtocol
 from .recurring import RecurringPaymentProcessorProtocol
 from .refunds import RefundProcessorProtocol
 from .stripe_processor import StripePaymentProcessor
-
+# if you use "__all__" into other file, the dunder method __all__ going to charge all these dependencies
 __all__ = [
     "PaymentProcessorProtocol",
     "StripePaymentProcessor",

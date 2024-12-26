@@ -7,6 +7,7 @@ from .notifier import NotifierProtocol
 
 @dataclass
 class SMSNotifier(NotifierProtocol):
+    #recuerda que si la clase tiene un comportamiento anormal, no cumple con los prinicipios solid y te genera un error al momento de usarlo
     gateway: str
 
     def send_confirmation(self, customer_data: CustomerData):
