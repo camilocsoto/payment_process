@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from typing import Self, Optional
+from typing import Optional, Self
 from dataclasses import dataclass
 
 from commons import Request

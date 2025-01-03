@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from .listener import Listener
+from listener import Listener
 
 
 @dataclass

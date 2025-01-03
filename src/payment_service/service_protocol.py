@@ -19,7 +19,7 @@ class PaymentServiceProtocol(Protocol):
     notifier: NotifierProtocol
     validators: ChainHandler
     logger: TransactionLogger
-    listeners: ListenersManager
+    listeners: Optional[ListenersManager] = None
     refund_processor: Optional[RefundProcessorProtocol] = None
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
 

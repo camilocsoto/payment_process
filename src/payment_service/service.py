@@ -1,5 +1,13 @@
+"""
+Implementación de patrón strategy:
+Dentro del contexto del notificador.
+Pasos:
+1. Crear un método que permita cambiar el comportamiento de una clase cuando se esté ejecutando (setNotfier )
+2. Crear una función que permita elegir el comportamiendo mientras se ejecuta: si es una clase u otra. (ir a main.py, y busca get_notifier)
+nota: revisa el final del archivo main.py, allí se vé como se implementa
+"""
 from dataclasses import dataclass
-from typing import Optional, Self
+from typing import Optional
 
 from commons import CustomerData, PaymentData, PaymentResponse, Request
 from loggers import TransactionLogger
@@ -7,8 +15,8 @@ from notifiers import NotifierProtocol
 from processors import (
     PaymentProcessorProtocol,
     RecurringPaymentProcessorProtocol,
-    RefundProcessorProtocol,
-em) # trae los 3 protocolos sin una implementación especifica
+    RefundProcessorProtocol
+) # trae los 3 protocolos sin una implementación especifica
 from validators import CustomerValidator, PaymentDataValidator
 from factory import PaymentProcessorFactory
 
@@ -18,20 +26,24 @@ from listeners import ListenersManager
 from validators import ChainHandler
 
 
+"""
+# 🆗 esta clase de alto nivel ahora será una interfaz, mediadora entre la clase abstracta
+Tiene agregadas unos atributos que no son funcionalidades concretas. Ej: Notifier, cuando debería ser email o sms
+"""
 @dataclass
 class PaymentService(PaymentServiceProtocol):
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol
     validators: ChainHandler
     logger: TransactionLogger
-    listeners: ListenersManager
+    listeners: Optional[ListenersManager] = None
     refund_processor: Optional[RefundProcessorProtocol] = None
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
 
     @classmethod
     def create_with_payment_processor(
         cls, payment_data: PaymentData, **kwargs
-    ) -> Self:
+    ) -> 'create_with_payment_processor':
         try:
             processor = PaymentProcessorFactory.create_payment_processor(
                 payment_data
@@ -41,7 +53,8 @@ class PaymentService(PaymentServiceProtocol):
             print("Error creando la clase")
             raise e
 
-    def set_notifier(self, notifier: NotifierProtocol):
+    def set_notifier(self, notifier: NotifierProtocol): #🆗
+        """Debe modificar la estrategia: si es por sms o por mail."""
         print("Changing the notifier implementation")
         self.notifier = notifier
 

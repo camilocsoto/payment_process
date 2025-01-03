@@ -16,3 +16,10 @@ separation criteria:
 characteristics:
 - the directories loggers, validators and  doesn't depend from a protocol. By other hand, processors, notifiers, depend from protocols
 - The directory processors has a lot of complexity because has 3 protocols and 3 payment procesors
+
+
+Patrones de diseño  files
+Strategy            service - main
+
+
+pip install pydantic numpy matplotlib typing python-dotenv stripe
