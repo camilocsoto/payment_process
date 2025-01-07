@@ -1,5 +1,8 @@
 from dataclasses import dataclass, field
-from listener import Listener
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from .listener import Listener
+
 
 
 @dataclass
