@@ -1,5 +1,14 @@
+""" Decorator pattern ☯️
+service_protocol.py: Este módulo está dedicado exclusivamente al decorator pattern
+paso 1: crear una interfaz o abstracción que describa el comportamiento de PaymentService. (service_protocol.py)
+paso 2: hacer que la clase principal implemente la interfaz (service.py)
+paso 3: crear una clase decoradora abstracta que implemente la clase principal (decorator_protocol.py)
+paso 4: crear una clase concreta que herede de la clase decoradora abstracta (logging_service .py)
+paso 5: se crea la lógica que envuelve la lógica original de la clase principal.(decorator_protocol.py)
+"""
+
 from typing import Protocol
-from typing import Optional, Self
+from typing import Optional
 
 from commons import CustomerData, PaymentData, PaymentResponse
 from loggers import TransactionLogger
@@ -9,12 +18,17 @@ from processors import (
     RecurringPaymentProcessorProtocol,
     RefundProcessorProtocol,
 )
-from validators import CustomerValidator, PaymentDataValidator
 from listeners import ListenersManager
 from validators import ChainHandler
 
 
-class PaymentServiceProtocol(Protocol):
+class PaymentServiceProtocol(Protocol): #☯️
+    """_summary_
+    Args:
+        Protocol (_type_): interfaz que define el comportamiento de PaymentService.
+        no define ningún comportamiento.
+    este protocolo lo va a heredar la clase PaymentService. (service.py)
+    """
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol
     validators: ChainHandler

@@ -7,6 +7,7 @@ Pasos:
 nota: revisa el final del archivo main.py, allí se vé como se implementa
 
 Implementación de patrón factory: 🟢
+Implementación de patrón decorator: ☯️
 """
 from dataclasses import dataclass
 from typing import Optional, Self
@@ -33,7 +34,7 @@ from validators import ChainHandler
 Tiene agregadOs atributos que NO son funcionalidades concretas. Ej: Notifier, cuando debería ser email o sms
 """
 @dataclass
-class PaymentService(PaymentServiceProtocol):
+class PaymentService(PaymentServiceProtocol): # ☯️ (just 1 line) hereda de la interfaz PaymentServiceProtocol 
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol #🆗
     validators: ChainHandler
@@ -47,7 +48,7 @@ class PaymentService(PaymentServiceProtocol):
         print("Changing the notifier implementation")
         self.notifier = notifier
 
-    @classmethod
+    @classmethod # 🟢
     def create_processor_payment_factory(cls, payment_data: PaymentData,**kwargs) -> Self:
         """_summary_
             info:

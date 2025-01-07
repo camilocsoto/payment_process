@@ -20,6 +20,11 @@ characteristics:
 
 Patrones de diseño  files
 Strategy            service - main
+factory             commons/payment_data - factory - service - main
+decorator           service_protocol - service - decorator_protocol - logging_service - main
 
+uses
+strategy: add the logic to  choose the notification method between sms and email.
+factory: create a class of transaction process (stripe, local, offline) and set it to the paymentService 
+decorator: upgrade the logs at the console of start and finish the transaction
 
-pip install pydantic numpy matplotlib typing python-dotenv stripe

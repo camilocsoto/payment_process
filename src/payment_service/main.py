@@ -1,8 +1,9 @@
 """
 Este archivo tendrá la lógica de negocio, la implementación de los protocolos de alto nivel:
-- - Implementación de Principio S. 🛸
+- Implementación de Principio S. 🛸
 - Implementación de patrón strategy. 🆗
 - Implementación de patrón factory. 🟢
+- Implementación de patrón decorator: ☯️
 
 
 """
@@ -12,6 +13,8 @@ from processors import StripePaymentProcessor
 from service import PaymentService
 from validators import PaymentDataValidator, CustomerHandler
 from commons import CustomerData, ContactInfo, PaymentData #🆗
+from logging_service import PaymentServiceLogging #☯️
+
 
 def get_notifier_implementation(customer_data: CustomerData) -> NotifierProtocol:
     """ 🆗 implementación de patrón strategy que escoge el método de notificación
@@ -69,7 +72,7 @@ if __name__ == "__main__":
     #si falla: escoge la otra estrategia:
     strategy_service.set_notifier(SMSNotifier)
     
-    # A continuación observará la implementación del patrón factory 🟢
+    # Implementación del patrón factory 🟢
     payment_data = PaymentData(amount=100, source="tok_visa" ,currency="USD", type="online") 
      # por defecto type es ONLINE, entonces no sería necesario ponerlo.
     factory_service = PaymentService.create_processor_payment_factory(
@@ -77,3 +80,14 @@ if __name__ == "__main__":
         notifier=notifier, 
         validators= dictionaries_map, 
         logger=logger)
+    
+    # Implementación de patrón decorator ☯️
+    payment_data = PaymentData(amount=100, source="tok_visa" ,currency="USD", type="online") 
+     # por defecto type es ONLINE, entonces no sería necesario ponerlo.
+    decorator_service = PaymentService.create_processor_payment_factory(
+        payment_data=payment_data, 
+        notifier=notifier, 
+        validators= dictionaries_map, 
+        logger=logger)
+    
+    loggin_service = PaymentServiceLogging(wrapped=decorator_service)

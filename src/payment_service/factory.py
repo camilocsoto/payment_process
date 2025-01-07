@@ -12,7 +12,7 @@ class PaymentProcessorFactory():
     
     @staticmethod
     def create_payment_processor(payment_data:PaymentData) -> PaymentProcessorProtocol:
-        """_summary_
+        """
         - Encapsula decisión de cuál procesador de pago tomar
         - el decorador crea un método que no necesita acceso a la instancia (self) ni a la clase (cls). 
         Se utiliza para encapsular funciones que no dependen de los atributos de la clase o de la instancia.
