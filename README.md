@@ -19,3 +19,5 @@ pip install pydantic numpy matplotlib typing python-dotenv stripe
 6. En la raíz de tu directorio/carpeta, crea un archivo y ponle de nombre .env. Allí debes pegar la API key secreta que copiaste del paso anterior.  
 
 7. Ejecuta el proyecto :D
+
+¡Dirigite a src para ver la estructura del proyectoy ver como se aplícan estos principios!

@@ -1,3 +1,6 @@
+solid principle contains the SOLID principles.
+
+payment_service directory contains design patterns
 The directory payment_service was the reestructuration of solid_principles on the files ater.py
 
 There's a problem with solid principles: there're so many code lines in one olly file, which means it's not maintainable
@@ -22,7 +25,7 @@ Patrones de diseño  files
 Strategy            service - main
 factory             commons/payment_data - factory - service - main
 decorator           service_protocol - service - decorator_protocol - logging_service - main
-
+builder             builder
 uses
 strategy: add the logic to  choose the notification method between sms and email.
 factory: create a class of transaction process (stripe, local, offline) and set it to the paymentService 
