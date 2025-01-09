@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from commons import PaymentData, PaymentType, CustomerData, ContactInfo
+from commons import PaymentData, PaymentType, CustomerData, PaymentResponse
 from processors import PaymentProcessorProtocol, OfflinePaymentProcessor, LocalPaymentProcessor, StripePaymentProcessor
 from notifiers import EmailNotifier, SMSNotifier
 from typing import Self
@@ -80,17 +80,18 @@ class RefundPaymentFactory():
 
 class RecurringPaymentFactory():
     @staticmethod
-    def setup_recurring(customer_data: CustomerData,payment_data:PaymentData):
+    def setup_recurring(customer_data: PaymentResponse,payment_data:PaymentData):
         match payment_data.type:
-            case PaymentType.ONLINE:
+            case customer_data.ONLINE:
                 match payment_data.currency:
                     case "USD":
                         return StripePaymentProcessor.setup_recurring_payment(customer_data, payment_data)
                     case _: #cualquier otra cosa
                         return LocalPaymentProcessor.setup_recurring_payment(customer_data, payment_data)
                 ...
-            case PaymentType.OFFLINE:
+            case customer_data.OFFLINE:
                 return OfflinePaymentProcessor() #no hace falta instanciar el método.
             case _: # cualquier otra cosa
                 raise ValueError("no se soporta este tipo de pagos recurrentes")
+
         

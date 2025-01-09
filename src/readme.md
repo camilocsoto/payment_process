@@ -26,8 +26,10 @@ Strategy            service - main
 factory             commons/payment_data - factory - service - main
 decorator           service_protocol - service - decorator_protocol - logging_service - main
 builder             builder - factory - main
+observer            listener - manager - accountability_listener - service_protocol
 uses
 strategy: add the logic to  choose the notification method between sms and email.
 factory: create a class of transaction process (stripe, local, offline) and set it to the paymentService 
 decorator: upgrade the logs at the console of start and finish the transaction
+observer: notifie if the transaction to accountability was succesull or failed
 

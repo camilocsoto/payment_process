@@ -13,7 +13,7 @@ from processors import (
     RecurringPaymentProcessorProtocol,
     RefundProcessorProtocol
 )
-from listeners import ListenersManager
+from listeners import ListenersManager, AccountabilityListener
 from validators import CustomerHandler, ChainHandler, PaymentDataValidator
 from factory import PaymentProcessorFactory, NotifierFactory, RefundPaymentFactory, RecurringPaymentFactory # lógica de elegir cuál procesador de pago usar
 from service import PaymentService
@@ -82,6 +82,12 @@ class PaymentServiceBuilder:
         self.recurring_processor = RecurringPaymentFactory.setup_recurring(customer_data=customer_data, payment_data=payment_data)
         return self
     
+    def set_listener(self) -> Self: # Parte de observer pattern ♾️
+        listen = ListenersManager() # generaría error. Ve a manager.py
+        account = AccountabilityListener()
+        listen.subscribe(account)
+        self.listeners = listen        
+    
     def build(self):
         #si no están todos los atributos del objeto:
         if not all( # si alguno de los elementos dentro de la lista no existe o es None, retorna False
@@ -89,11 +95,12 @@ class PaymentServiceBuilder:
                 self.payment_processor,
                 self.notifier,
                 self.validators,
+                self.listeners,
                 self.logger
             ]
         ):
             # la siguiente list_comprenhension guarda los nombres de los atributos que no se han instanciado (value)
-            missing = [name for name, value in [("payment", self.payment_processor), ("notifier", self.notifier), ("validators", self.validators), ("logger", self.logger)] if value is None]
+            missing = [name for name, value in [("payment", self.payment_processor), ("notifier", self.notifier), ("validators", self.validators), ("logger", self.logger), ("listener", self.listeners)] if value is None]
             raise ValueError(f"Missing dependencies: {missing}")
         return PaymentService( 
             payment_processor= self.payment_processor,

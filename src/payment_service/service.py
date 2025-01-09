@@ -8,6 +8,7 @@ nota: revisa el final del archivo main.py, allí se vé como se implementa
 
 Implementación de patrón factory: 🟢
 Implementación de patrón decorator: ☯️
+Implementación de patrón observer: ♾️
 """
 from dataclasses import dataclass
 from typing import Optional, Self
@@ -39,7 +40,7 @@ class PaymentService(PaymentServiceProtocol): # ☯️ (just 1 line) hereda de l
     notifier: NotifierProtocol #🆗
     validators: ChainHandler
     logger: TransactionLogger
-    listeners: Optional[ListenersManager] = None
+    listeners: Optional[ListenersManager] = None #♾️
     refund_processor: Optional[RefundProcessorProtocol] = None
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
 
