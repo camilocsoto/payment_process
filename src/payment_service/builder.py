@@ -14,7 +14,7 @@ from processors import (
     RefundProcessorProtocol
 )
 from listeners import ListenersManager
-from validators import ChainHandler
+from validators import CustomerHandler, ChainHandler, PaymentDataValidator
 from factory import PaymentProcessorFactory, NotifierFactory, RefundPaymentFactory, RecurringPaymentFactory # lógica de elegir cuál procesador de pago usar
 from service import PaymentService
 class PaymentServiceBuilder:
@@ -38,7 +38,10 @@ class PaymentServiceBuilder:
         return self
 
     def set_payment_validation(self) -> Self:
-        self.validators = ChainHandler()
+        handler1 = CustomerHandler()
+        handler2 = PaymentDataValidator()
+        handler1.set_next(handler2)
+        self.validators = handler1
         return self
     
     def set_listener(self) -> Self:

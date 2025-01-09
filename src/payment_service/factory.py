@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from commons import PaymentData, PaymentType, CustomerData, ContactInfo
 from processors import PaymentProcessorProtocol, OfflinePaymentProcessor, LocalPaymentProcessor, StripePaymentProcessor
-from service_protocol import PaymentServiceProtocol
-from notifiers import NotifierProtocol, EmailNotifier, SMSNotifier
+from notifiers import EmailNotifier, SMSNotifier
+from typing import Self
 """_summary_
 🟢 El patrón factory encapsula el comportamiendo de clases y utilizar uno u otro para la creación de objetos.
 1. File commons/payment_data.py: Se creó la clase PaymentType, que se instancia en el importante PaymentData
@@ -37,7 +37,7 @@ class PaymentProcessorFactory():
                 raise ValueError("no se soporta este tipo de pagos")
             
 
-#retos:
+#retos: son parte del patrón builder 🔥
 class NotifierFactory():
     """_summary_
     Args:
@@ -49,15 +49,15 @@ class NotifierFactory():
         
     """
     @staticmethod
-    def create_notifier(customer_data:CustomerData) -> NotifierProtocol:
+    def create_notifier(customer_data:CustomerData) -> Self:
 
-        match customer_data.contact_info:
-            case ContactInfo.email:
-                return EmailNotifier()
-            case ContactInfo.phone: 
-                return SMSNotifier(gateway="Tigo_Une: 1234567890")
-            case _:
-                raise ValueError("no se soporta este tipo de notificación")
+        if customer_data.contact_info.email:
+            notifier = EmailNotifier()
+        elif customer_data.contact_info.phone: 
+            notifier = SMSNotifier(gateway="Tigo_Une: 1234567890")
+        else:
+            raise ValueError("no se soporta este tipo de notificación")
+        return notifier
 
 @dataclass
 class RefundPaymentFactory():

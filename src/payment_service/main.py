@@ -14,7 +14,7 @@ from service import PaymentService
 from validators import PaymentDataValidator, CustomerHandler
 from commons import CustomerData, ContactInfo, PaymentData #🆗
 from logging_service import PaymentServiceLogging #☯️
-
+from builder import PaymentServiceBuilder #🔥
 
 def get_notifier_implementation(customer_data: CustomerData) -> NotifierProtocol:
     """ 🆗 implementación de patrón strategy que escoge el método de notificación
@@ -89,5 +89,15 @@ if __name__ == "__main__":
         notifier=notifier, 
         validators= dictionaries_map, 
         logger=logger)
-    
     loggin_service = PaymentServiceLogging(wrapped=decorator_service)
+    
+    # Implementación de patrón builder 🔥
+    builder = PaymentServiceBuilder()
+    payment_data = PaymentData(amount=100, source="tok_visa" ,currency="USD", type="online") 
+    builder_service = (
+        builder.set_payment_processor(payment_data)
+        .set_notifier(customer_data)
+        .set_payment_validation()
+        .setLogger()
+        .build()
+    )

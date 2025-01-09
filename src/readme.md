@@ -25,7 +25,7 @@ Patrones de diseño  files
 Strategy            service - main
 factory             commons/payment_data - factory - service - main
 decorator           service_protocol - service - decorator_protocol - logging_service - main
-builder             builder
+builder             builder - factory - main
 uses
 strategy: add the logic to  choose the notification method between sms and email.
 factory: create a class of transaction process (stripe, local, offline) and set it to the paymentService 
