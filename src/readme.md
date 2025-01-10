@@ -21,15 +21,17 @@ characteristics:
 - The directory processors has a lot of complexity because has 3 protocols and 3 payment procesors
 
 
-Patrones de diseño  files
+design patterns     files
 Strategy            service - main
-factory             commons/payment_data - factory - service - main
+factory             commons:payment_data - factory - service - main
 decorator           service_protocol - service - decorator_protocol - logging_service - main
 builder             builder - factory - main
 observer            listener - manager - accountability_listener - service_protocol
+chain of responsability | commons:requests - ChainHandler
 uses
 strategy: add the logic to  choose the notification method between sms and email.
 factory: create a class of transaction process (stripe, local, offline) and set it to the paymentService 
 decorator: upgrade the logs at the console of start and finish the transaction
-observer: notifie if the transaction to accountability was succesull or failed
+observer: send a message if the transaction to accountability was succesull or failed
+chain of responsability: create a chain of validatons to the info of customer and payment for the payment process.
 

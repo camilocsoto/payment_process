@@ -49,12 +49,6 @@ if __name__ == "__main__":
     customer_data =get_customer_info()
     notifier= get_notifier_implementation(customer_data = customer_data)
     
-    # Se crea el manejador de dict y configura la cadena de validación
-    handler_map = CustomerHandler()
-    payment_data_validator = PaymentDataValidator()
-    handler_map.set_next(payment_data_validator)
-    # Asigna la cadena de validadores a dictionaries_map
-    dictionaries_map = handler_map
     logger = TransactionLogger()
     
     # 🆗 Patrón strategy para cambiar de estrategia según el contexto parte 1:
@@ -64,7 +58,6 @@ if __name__ == "__main__":
     strategy_service = PaymentService( 
         payment_processor=stripe_pay_processor, 
         notifier=notifier, #🆗
-        validators= dictionaries_map, 
         logger=logger
     )
     # parte 2: Cambia la estrategia a email: 🆗
@@ -78,7 +71,6 @@ if __name__ == "__main__":
     factory_service = PaymentService.create_processor_payment_factory(
         payment_data=payment_data, 
         notifier=notifier, 
-        validators= dictionaries_map, 
         logger=logger)
     
     # Implementación de patrón decorator ☯️
@@ -87,7 +79,6 @@ if __name__ == "__main__":
     decorator_service = PaymentService.create_processor_payment_factory(
         payment_data=payment_data, 
         notifier=notifier, 
-        validators= dictionaries_map, 
         logger=logger)
     loggin_service = PaymentServiceLogging(wrapped=decorator_service)
     
@@ -98,6 +89,18 @@ if __name__ == "__main__":
         builder.set_payment_processor(payment_data)
         .set_notifier(customer_data)
         .set_payment_validation()
+        .setLogger()
+        .build()
+    )
+    # Implementación de patrón observer: vé a service, allí se vé donde se implementa ♾️
+    
+    # Implementación de patrón chain of responsability ☣️
+    builder = PaymentServiceBuilder()
+    payment_data = PaymentData(amount=100, source="tok_visa" ,currency="USD", type="online") 
+    builder_service = (
+        builder.set_payment_processor(payment_data)
+        .set_notifier(customer_data)
+        .set_payment_validation() #☣️
         .setLogger()
         .build()
     )

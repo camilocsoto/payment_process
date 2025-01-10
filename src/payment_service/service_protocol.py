@@ -6,8 +6,8 @@ paso 3: crear una clase decoradora abstracta que implemente la clase principal (
 paso 4: crear una clase concreta que herede de la clase decoradora abstracta (logging_service .py)
 paso 5: se crea la lógica que envuelve la lógica original de la clase principal.(decorator_protocol.py)
 
-observer pattern ♾️
-Este módulo contiene una implementación Listener, estas son parte de la implementación del patrón observer.
+observer pattern ♾️ implementado en Listener
+chain of responsability pattern ☣️ implementado en validator
 """
 
 from typing import Protocol
@@ -34,7 +34,7 @@ class PaymentServiceProtocol(Protocol): #☯️
     """
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol
-    validators: ChainHandler
+    validators: Optional[ChainHandler] = None # ☣️
     logger: TransactionLogger
     listeners: Optional[ListenersManager] = None #♾️
     refund_processor: Optional[RefundProcessorProtocol] = None

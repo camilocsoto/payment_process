@@ -23,6 +23,9 @@ class PaymentServiceBuilder:
         Para construir la clase paso a paso, necesita que los atributos sean opcionales original y por defecto None.
         🟥 Se puede instanciar de forma directa porque no necesita de ninguna abstracción. Solo usa métodos set (fácil)
         🟦 Necesita implementar una lógica extra porque depende de abstracciones.
+    Returns:
+        Es importante que los métodos cumplan con la firma del resto de métodos, significa que deben retornar el mismo
+        objeto (self)
     """
     payment_processor: Optional[PaymentProcessorProtocol] = None # 🟦
     notifier: Optional[NotifierProtocol] = None # 🟦
@@ -38,10 +41,12 @@ class PaymentServiceBuilder:
         return self
 
     def set_payment_validation(self) -> Self:
-        handler1 = CustomerHandler()
-        handler2 = PaymentDataValidator()
-        handler1.set_next(handler2)
-        self.validators = handler1
+        customer = CustomerHandler()
+        payment = PaymentDataValidator()
+        handle = ChainHandler()
+        handle.handle(customer)
+        handle.set_next(payment)
+        self.validators = handle
         return self
     
     def set_listener(self) -> Self:

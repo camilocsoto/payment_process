@@ -9,6 +9,7 @@ nota: revisa el final del archivo main.py, allí se vé como se implementa
 Implementación de patrón factory: 🟢
 Implementación de patrón decorator: ☯️
 Implementación de patrón observer: ♾️
+Implementación de patrón chain of responsability: ☣️
 """
 from dataclasses import dataclass
 from typing import Optional, Self
@@ -38,7 +39,7 @@ Tiene agregadOs atributos que NO son funcionalidades concretas. Ej: Notifier, cu
 class PaymentService(PaymentServiceProtocol): # ☯️ (just 1 line) hereda de la interfaz PaymentServiceProtocol 
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol #🆗
-    validators: ChainHandler
+    validators: Optional[ChainHandler] = None
     logger: TransactionLogger
     listeners: Optional[ListenersManager] = None #♾️
     refund_processor: Optional[RefundProcessorProtocol] = None
@@ -72,15 +73,17 @@ class PaymentService(PaymentServiceProtocol): # ☯️ (just 1 line) hereda de l
     def process_transaction(
         self, customer_data: CustomerData, payment_data: PaymentData
     ) -> PaymentResponse:
-        try:
+        # Implementación de chain of responsabilty ☣️
+        try: # ☣️
             request = Request(
                 customer_data=customer_data, payment_data=payment_data
-            )
+            ) # encapsula los 2 objetos
             self.validators.handle(request=request)
 
         except Exception as e:
             print(f"fallo en las validaciones: {e}")
             raise e
+        # Implementación  observer ♾️
         payment_response = self.payment_processor.process_transaction(
             customer_data, payment_data
         )
