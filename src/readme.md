@@ -22,7 +22,7 @@ characteristics:
 
 
 design patterns     files
-Strategy            service - main
+Strategy            service - notifier - (email - sms) - main
 factory             commons:payment_data - factory - service - main
 decorator           service_protocol - service - decorator_protocol - logging_service - main
 builder             builder - factory - main

@@ -13,11 +13,10 @@ from typing import Self
 """
 class PaymentProcessorFactory():
     
-    @staticmethod
+    @staticmethod # el decorador crea un método que no necesita acceso a la instancia (self) ni a la clase (cls). 
     def create_payment_processor(payment_data:PaymentData) -> PaymentProcessorProtocol:
         """
         - Encapsula decisión de cuál procesador de pago tomar
-        - el decorador crea un método que no necesita acceso a la instancia (self) ni a la clase (cls). 
         Se utiliza para encapsular funciones que no dependen de los atributos de la clase o de la instancia.
         Args:
             payment_data (PaymentData): Crea un objeto para hacer la transacción.
