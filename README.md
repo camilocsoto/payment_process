@@ -7,7 +7,7 @@ disclaimer: you need python >= 3.11.1
 python3 -m venv env
 # activa tu entorno con el siguiente comando:
 source env/bin/activate
-´´´
+´´´  
 3. Descarga las librerías:  
 ´´´bash
 pip install pydantic numpy matplotlib typing python-dotenv stripe
