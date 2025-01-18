@@ -4,11 +4,11 @@ disclaimer: you need python >= 3.11.1
 1. Descarga el .zip de los recursos de clase y crea una carpeta en donde instanciar el proyecto.  
 
 2. Crea tu entorno virtual, en mi caso mi S.O es wsl2, es decir un Linux dentro de Windows y yo lo creo con estos comandos, asegúrate de tener los comandos para tu S.O:  
-´python3 -m venv env´  
-activa tu entorno con el siguiente comando:  
-´source env/bin/activate´  
+`python3 -m venv env`  
+activa tu entorno con el siguiente comando: (apto en distros de linux) 🐧  
+`source env/bin/activate`  
 3. Descarga las librerías:  
-´pip install pydantic numpy matplotlib typing python-dotenv stripe´  
+`pip install pydantic numpy matplotlib typing python-dotenv stripe`  
 
 4. Crea tu cuenta en Stripe: dirígete al siguiente link y crea una cuenta. Yo vivo en Colombia pero le puse México.  
 
