@@ -25,7 +25,8 @@ To restructure the project:
 - The directories `loggers` and `validators` do not depend on any protocol. On the other hand, `processors` and `notifiers` depend on protocols.
 - The `processors` directory is particularly complex as it contains three protocols and three payment processors.
 
-## Design Patterns
+## Design Patterns  
+Here're the design patterns with their uses at its respective files 
 
 | Design Patterns         | Uses                                                                                   | Files                                                                                      |
 |--------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
