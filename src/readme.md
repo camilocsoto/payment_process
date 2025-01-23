@@ -1,4 +1,3 @@
-
 # SOLID Principles and Project Restructuring
 
 The **SOLID Principle** contains a set of principles aimed at improving software design and maintainability.
@@ -26,7 +25,7 @@ To restructure the project:
 - The `processors` directory is particularly complex as it contains three protocols and three payment processors.
 
 ## Design Patterns  
-Here're the design patterns with their uses at its respective files 
+Here're the design patterns with their uses at theirs respective files 
 
 | Design Patterns         | Uses                                                                                   | Files                                                                                      |
 |--------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
