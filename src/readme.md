@@ -35,3 +35,5 @@ Here're the design patterns with their uses at theirs respective files
 | **Builder**              | Simplify the creation of complex objects step by step.                                | `builder`, `factory`, `main`                                                              |
 | **Observer**             | Notify accountability about the success or failure of a transaction.                  | `listener`, `manager`, `accountability_listener`, `service_protocol`                      |
 | **Chain of Responsibility** | Create a chain of validations for customer and payment information during the payment process. | `commons:requests`, `ChainHandler`                                                        |
+
+Thanks for read this, I hope this was usefull for you
